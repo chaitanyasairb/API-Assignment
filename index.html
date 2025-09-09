@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>String to Characters</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f9fafb; padding: 40px; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #333; }
+    input, button { margin-top: 10px; width: 100%; padding: 10px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; }
+    button { background: #2563eb; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .result { margin-top: 20px; font-weight: bold; color: #111; word-wrap: break-word; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>String to Characters</h1>
+
+    <label>Enter String:</label>
+    <input type="text" id="inputText" placeholder="Type something...">
+    <button onclick="sendText()">Submit</button>
+
+    <p style="text-align:center; margin: 20px 0;">OR</p>
+
+    <label>Upload .txt File:</label>
+    <input type="file" id="fileInput" accept=".txt" onchange="sendFile()">
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const API_URL = "http://127.0.0.1:8000"; // update after deploying backend
+
+    async function sendText() {
+      const text = document.getElementById("inputText").value;
+      if (text.length === 0) {
+        document.getElementById("result").innerText = "INVALID STRING";
+        return;
+      }
+      const response = await fetch(`${API_URL}/chars`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+      const data = await response.json();
+      document.getElementById("result").innerText = JSON.stringify(data);
+    }
+
+    async function sendFile() {
+      const fileInput = document.getElementById("fileInput").files[0];
+      if (!fileInput) {
+        document.getElementById("result").innerText = "INVALID STRING";
+        return;
+      }
+      const formData = new FormData();
+      formData.append("file", fileInput);
+
+      const response = await fetch(`${API_URL}/chars/file`, {
+        method: "POST",
+        body: formData
+      });
+      const data = await response.json();
+      document.getElementById("result").innerText = JSON.stringify(data);
+    }
+  </script>
+</body>
+</html>
